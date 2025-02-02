@@ -33,12 +33,6 @@ resource "aws_cloudwatch_log_group" "lambda_log_group" {
   retention_in_days = var.log_retention_days
 }
 
-# Grupo de logs no CloudWatch para a Step Function
-resource "aws_cloudwatch_log_group" "step_function_log_group" {
-  name              = "/aws/states/${var.prefix_name}-${var.step_function_name}"
-  retention_in_days = var.log_retention_days
-}
-
 ######### IAM: FUNÇÃO LAMBDA ##########################################
 # Role IAM para a Lambda principal
 resource "aws_iam_role" "lambda_role" {
