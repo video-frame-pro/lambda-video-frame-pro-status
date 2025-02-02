@@ -29,20 +29,25 @@ def create_response(status_code, data=None, message=None):
 
 def get_video_metadata(video_id):
     """
-    Consulta o DynamoDB para obter os metadados do vídeo com base no video_id.
+    Consulta o DynamoDB pelo video_id usando um GSI (Global Secondary Index).
     """
     try:
         table = dynamodb.Table(TABLE_NAME)
-        response = table.get_item(Key={"video_id": video_id})
+        response = table.query(
+            IndexName="VideoIdIndex",  # Nome do GSI criado
+            KeyConditionExpression="video_id = :video_id",
+            ExpressionAttributeValues={":video_id": video_id}
+        )
 
-        if "Item" not in response:
+        if "Items" not in response or len(response["Items"]) == 0:
             return None
 
-        return response["Item"]
+        return response["Items"][0]  # Retorna o primeiro item encontrado
 
     except ClientError as e:
         logger.error(f"Error querying DynamoDB: {e}")
         raise Exception("Error retrieving data from the database.")
+
 
 def lambda_handler(event, context):
     """

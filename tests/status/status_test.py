@@ -34,9 +34,13 @@ class TestLambdaStatus(TestCase):
         """
         Testa erro interno quando a consulta ao DynamoDB falha.
         """
-        mock_table.return_value.get_item.side_effect = ClientError(
-            {"Error": {"Code": "InternalServerError", "Message": "DynamoDB Failure"}}, "GetItem"
-        )
+        # Criar um mock da tabela e definir erro no método `query`
+        mock_table_instance = MagicMock()
+        mock_table.return_value = mock_table_instance
+        error_response = {
+            "Error": {"Code": "InternalServerError", "Message": "DynamoDB Failure"}
+        }
+        mock_table_instance.query.side_effect = ClientError(error_response, "Query")
 
         response = lambda_handler(self.event, self.context)
         response_body = json.loads(json.dumps(response["body"]))
