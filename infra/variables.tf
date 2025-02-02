@@ -34,25 +34,3 @@ variable "dynamo_table_name" {
 variable "log_retention_days" {
   description = "Número de dias para retenção dos logs no CloudWatch"
 }
-
-######### STEP FUNCTION INFOS ##########################################
-variable "step_function_name" {
-  description = "Nome da Step Function para processar o fluxo de vídeos"
-}
-
-variable "lambda_upload_name" {
-  description = "Nome da função Lambda responsável pelo upload na Step Function"
-}
-
-variable "lambda_processing_name" {
-  description = "Nome da função Lambda responsável pelo processamento na Step Function"
-}
-
-variable "lambda_send_name" {
-  description = "Nome da função Lambda responsável pelo envio de resultados na Step Function"
-}
-
-######### SSM VARIABLES INFOS ##########################################
-variable "cognito_user_pool_id_ssm" {
-  description = "Caminho no SSM para o ID do User Pool do Cognito"
-}
