@@ -7,7 +7,6 @@ from botocore.exceptions import ClientError
 
 # Definir variável de ambiente mockada
 os.environ["DYNAMO_TABLE_NAME"] = "mocked_table"
-os.environ["AWS_REGION"] = "us-east-1"
 
 # Garantir que boto3 use a região definida
 boto3.setup_default_session(region_name=os.environ["AWS_REGION"])
