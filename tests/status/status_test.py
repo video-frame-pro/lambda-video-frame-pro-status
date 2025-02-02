@@ -8,6 +8,9 @@ from botocore.exceptions import ClientError
 # Definir variável de ambiente mockada
 os.environ["DYNAMO_TABLE_NAME"] = "mocked_table"
 
+# Garantir que boto3 use a região definida
+boto3.setup_default_session(region_name=os.environ["AWS_REGION"])
+
 # Importar a Lambda após definir variáveis de ambiente
 from src.status.status import lambda_handler, get_video_metadata, create_response
 
