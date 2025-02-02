@@ -16,7 +16,7 @@ TABLE_NAME = os.environ["DYNAMO_TABLE_NAME"]
 
 def create_response(status_code, data=None, message=None):
     """
-    Gera uma resposta formatada..
+    Gera uma resposta formatada.
     """
     response = {"statusCode": status_code, "body": {}}
 
