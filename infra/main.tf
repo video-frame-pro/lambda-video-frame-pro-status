@@ -21,7 +21,7 @@ resource "aws_lambda_function" "lambda_function" {
   # Variáveis de ambiente para a Lambda
   environment {
     variables = {
-      DYNAMO_TABLE_NAME    = var.dynamo_table_name
+      DYNAMO_TABLE_NAME = var.dynamo_table_name
     }
   }
 }
@@ -56,10 +56,16 @@ resource "aws_iam_policy" "lambda_policy" {
     Version = "2012-10-17",
     Statement = [
       {
-        # Permissões para o DynamoDB
+        # Permissões para a tabela DynamoDB (inserir e buscar)
         Action   = ["dynamodb:PutItem", "dynamodb:GetItem"],
         Effect   = "Allow",
         Resource = "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${var.dynamo_table_name}"
+      },
+      {
+        # Permissão para consultar o GSI (VideoIdIndex)
+        Action   = ["dynamodb:Query"],
+        Effect   = "Allow",
+        Resource = "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${var.dynamo_table_name}/index/VideoIdIndex"
       },
       {
         # Permissões para logs no CloudWatch
