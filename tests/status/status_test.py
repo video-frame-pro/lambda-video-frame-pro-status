@@ -7,6 +7,8 @@ from botocore.exceptions import ClientError
 
 # Definir variável de ambiente mockada
 os.environ["DYNAMO_TABLE_NAME"] = "mocked_table"
+os.environ["AWS_REGION"] = "us-east-1"  # Definir região para evitar erro
+boto3.setup_default_session(region_name="us-east-1")  # Evita erro NoRegionError na pipeline
 
 # Importar a Lambda após definir variáveis de ambiente
 from src.status.status import lambda_handler, get_video_metadata, create_response
@@ -27,18 +29,17 @@ class TestLambdaStatus(TestCase):
         self.assertEqual(response["statusCode"], 400)
         self.assertIn("The 'video_id' parameter is required.", response_body["message"])
 
-    @patch("boto3.resource")
-    def test_lambda_handler_dynamodb_failure(self, mock_boto3_resource):
+    @patch("src.status.status.dynamodb.Table")
+    def test_lambda_handler_dynamodb_failure(self, mock_table):
         """
         Testa erro interno quando a consulta ao DynamoDB falha.
         """
-        mock_table = MagicMock()
-        mock_boto3_resource.return_value.Table.return_value = mock_table
-        error_response = {"Error": {"Code": "InternalServerError", "Message": "DynamoDB Failure"}}
-        mock_table.get_item.side_effect = ClientError(error_response, "GetItem")
+        mock_table.return_value.get_item.side_effect = ClientError(
+            {"Error": {"Code": "InternalServerError", "Message": "DynamoDB Failure"}}, "GetItem"
+        )
 
         response = lambda_handler(self.event, self.context)
-        response_body = response["body"]
+        response_body = json.loads(json.dumps(response["body"]))
 
         self.assertEqual(response["statusCode"], 500)
         self.assertIn("Internal server error.", response_body["message"])
