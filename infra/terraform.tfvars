@@ -15,3 +15,7 @@ dynamo_table_name = "video-frame-pro-metadata-table" # Nome da tabela DynamoDB p
 
 ######### LOGS CLOUD WATCH #############################################
 log_retention_days = 7 # Dias para retenção dos logs no CloudWatch
+
+######### SSM VARIABLES INFOS ##########################################
+cognito_user_pool_id_ssm = "/video-frame-pro/cognito/user_pool_id" # Caminho no SSM para o User Pool ID do Cognito
+
