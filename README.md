@@ -15,7 +15,7 @@ A função consulta o status de um vídeo no **DynamoDB**, retornando os detalhe
 
 A função Lambda executa as seguintes tarefas:
 
-1. **Recebe um `video_id`** como parâmetro na URL.
+1. **Recebe um `video_id`** como parâmetro na URL. 
 2. **Consulta o DynamoDB** para obter as informações do vídeo.
 3. **Retorna os detalhes do vídeo**, incluindo usuário, URL, taxa de frames, status e ID da Step Function.
 
