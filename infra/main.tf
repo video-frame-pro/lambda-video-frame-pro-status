@@ -22,6 +22,7 @@ resource "aws_lambda_function" "lambda_function" {
   environment {
     variables = {
       DYNAMO_TABLE_NAME = var.dynamo_table_name
+      COGNITO_USER_POOL_ID = data.aws_ssm_parameter.cognito_user_pool_id.value
     }
   }
 }
@@ -57,15 +58,32 @@ resource "aws_iam_policy" "lambda_policy" {
     Statement = [
       {
         # Permissões para a tabela DynamoDB (inserir e buscar)
-        Action   = ["dynamodb:PutItem", "dynamodb:GetItem"],
+        Action   = [
+          "dynamodb:PutItem",
+          "dynamodb:GetItem",
+          "dynamodb:Query",
+          "dynamodb:Scan"
+        ],
         Effect   = "Allow",
         Resource = "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${var.dynamo_table_name}"
       },
       {
         # Permissão para consultar o GSI (VideoIdIndex)
-        Action   = ["dynamodb:Query"],
+        Action   = [
+          "dynamodb:Query",
+          "dynamodb:GetItem"
+        ],
         Effect   = "Allow",
         Resource = "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${var.dynamo_table_name}/index/VideoIdIndex"
+      },
+      {
+        # Permissões para consultar informações do Cognito
+        Action   = [
+          "cognito-idp:GetUser",
+          "cognito-idp:AdminGetUser"
+        ],
+        Effect   = "Allow",
+        Resource = "*"
       },
       {
         # Permissões para logs no CloudWatch
