@@ -8,6 +8,11 @@ provider "aws" {
 # Obter informações sobre a conta AWS (ID da conta, ARN, etc.)
 data "aws_caller_identity" "current" {}
 
+# Obter o User Pool ID do Cognito no SSM
+data "aws_ssm_parameter" "cognito_user_pool_id" {
+  name = var.cognito_user_pool_id_ssm
+}
+
 ######### FUNÇÃO LAMBDA ###############################################
 # Função Lambda principal
 resource "aws_lambda_function" "lambda_function" {
