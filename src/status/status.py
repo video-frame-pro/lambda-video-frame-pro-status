@@ -55,14 +55,15 @@ def decode_token(event):
 
 def get_video_metadata(video_id, user_name):
     """
-    Consulta o DynamoDB pelo video_id garantindo que pertence ao usuário autenticado.
+    Consulta o DynamoDB pelo video_id e user_name.
     """
     try:
         logger.info(f"Querying DynamoDB for video_id: {video_id}, user_name: {user_name}...")
         table = dynamodb.Table(TABLE_NAME)
+
+        # 🔹 Ajuste: Usa KeyConditionExpression para buscar pela Partition Key (video_id) e Sort Key (user_name)
         response = table.query(
-            KeyConditionExpression=Key("video_id").eq(video_id),
-            FilterExpression=Key("user_name").eq(user_name)
+            KeyConditionExpression=Key("video_id").eq(video_id) & Key("user_name").eq(user_name)
         )
 
         if not response.get("Items"):
@@ -74,6 +75,7 @@ def get_video_metadata(video_id, user_name):
     except ClientError as e:
         logger.error(f"Error querying DynamoDB: {e}")
         raise Exception("Error retrieving data from the database.")
+
 
 def lambda_handler(event, context):
     """
